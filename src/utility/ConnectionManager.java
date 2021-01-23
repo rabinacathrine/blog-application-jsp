@@ -1,6 +1,5 @@
 package utility;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,35 +7,30 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionManager {
-	public static Properties loadPropertiesFile() throws IOException {
-		Properties prop = new Properties();
-		InputStream in = ConnectionManager.class.getClassLoader().getResourceAsStream("jdbc.properties");
+	public static Properties loadPropertiesFile() throws Exception {
+		Properties prop = new Properties();	
+		InputStream in =  ConnectionManager.class.getClassLoader().getResourceAsStream("jdbc.properties");
 		prop.load(in);
-		in.close();
-		return null;
+		in.close(); 
+		return prop;
 	}
+	public static Connection getConnection() throws Exception,SQLException {
+		Properties p = loadPropertiesFile(); //loadproperties returns properties.
+		Class.forName(p.getProperty("driver")); //getting value in jdbc assigned to prop.why seperate file is db may change
+		//create connection object
+//		System.out.println(p.getProperty("driver"));
+//		System.out.println(p.getProperty("url"));
+//		Connection con= null;
+		Connection con= DriverManager.getConnection(p.getProperty("url"),p.getProperty("username"),p.getProperty("password"));
 	
-	public static Connection getConnection() throws IOException, ClassNotFoundException, SQLException {
-		Properties properties = new Properties();
-		properties = loadPropertiesFile();
-		
-		String driver,url,username,password;
-		
-		//driver = properties.getProperty("driver");
-		url = properties.getProperty("url");
-		password = properties.getProperty("password");
-		username  = properties.getProperty("username");
-		
-		Class.forName(properties.getProperty("driver"));
-		
-		Connection con = DriverManager.getConnection(url,username,password);
-		if(con!=null) {
-			System.out.println("done");
+		if(con !=null) {
+			System.out.println("Established");
 		}
 		else {
-			System.out.println("!!!");
+			System.out.println("Not connected");
 		}
 		return con;
+		
 		
 	}
 }

@@ -12,11 +12,17 @@ import utility.ConnectionManager;
 public class UserDAO implements UserDAOInterface{
 
 	@Override
-	public int signup(User user) throws ClassNotFoundException, IOException {
+	public int signup(User user) {
 		String INSERT_USER_SQL = "INSERT INTO USERSBLOG(email, password)VALUES(?,?)";
 		int result = 0;
 		try {
-			Connection con = ConnectionManager.getConnection();
+			Connection con = null;
+			try {
+				con = ConnectionManager.getConnection();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			PreparedStatement ps  = con.prepareStatement(INSERT_USER_SQL);
 			ps.setString(1, user.getEmail());
 			ps.setNString(2, user.getPassword());
@@ -43,6 +49,9 @@ public class UserDAO implements UserDAOInterface{
 			status = rs.next();
 		}
 		catch(SQLException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return status;
